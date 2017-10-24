@@ -1,0 +1,99 @@
+//
+//  MenuGame.cpp
+//  Pestle
+//
+//  Created by Braeden Atlee on 10/9/17.
+//  Copyright © 2017 Braeden Atlee. All rights reserved.
+//
+
+#include "MenuGame.hpp"
+#include "MenuMain.hpp"
+#include "Logic.hpp"
+#include "Room.hpp"
+#include "Display.hpp"
+#include "Actor.hpp"
+
+
+MenuGame::MenuGame(Logic* logic) : Menu(logic){
+    room = new Room(50, 30);
+    //playerActor = new Actor(logic->client->getClientId(), 0, 0, (FONT_W/2.0)-1, (FONT_H/2.0)-2);
+    //room->newActor(playerActor);
+}
+
+MenuGame::~MenuGame(){
+    delete room;
+}
+
+void MenuGame::update(Display* display, double delta){
+    
+    try{
+    
+        if(logic->client){
+            if(logic->client->isConnectedToServer()){
+                logic->client->update();
+            }else{
+                logic->changeMenu(new MenuMain(logic));
+            }
+        }
+        
+        if(playerActor){
+            
+            double vx = 0;
+            double vy = 0;
+
+            double speed = 0.05;
+
+            if(display->isKey(logic->settings->keyLeft)){
+                vx -= speed;
+            }
+            if(display->isKey(logic->settings->keyRight)){
+                vx += speed;
+            }
+            if(display->isKey(logic->settings->keyUp)){
+                vy -= speed;
+            }
+            if(display->isKey(logic->settings->keyDown)){
+                vy += speed;
+            }
+
+            playerActor->vx = vx;
+            playerActor->vy = vy;
+            {
+                auto packet = Packet_BI_ActorMove(playerActor);
+                logic->client->sendToServer(&packet, (unsigned char)sizeof(packet));
+            }
+
+            int wW, wH;
+            SDL_GetWindowSize(display->getWindow(), &wW, &wH);
+
+            viewXOff += ((playerActor->px - wW/2) - viewXOff) / 4;
+            viewYOff += ((playerActor->py - wH/2) - viewYOff) / 4;
+            
+            if(room){
+                room->update(display, delta, viewXOff, viewYOff);
+            }
+            
+        }else{
+            playerActor = room->getActor(logic->client->getClientId());
+            if(playerActor){
+                cout << "Found Player Actor: " << playerActor->getId() << "\n";
+            }
+        }
+        
+    }catch(ExceptionClient e){
+        cout << "Client Error: " << e.reason << "\n";
+        logic->changeMenu(new MenuMain(logic));
+    }
+    
+    //cout << 1000/delta << "\n";
+    
+}
+
+void MenuGame::keyDown(SDL_Scancode scancode){
+    
+}
+
+void MenuGame::keyUp(SDL_Scancode scancode){
+    
+}
+

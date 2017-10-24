@@ -1,0 +1,8 @@
+#Xcode
+*.xcodeproj/
+
+#Executable shortcut
+Pestle
+
+#Notes
+notes.txt

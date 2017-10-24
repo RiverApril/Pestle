@@ -1,0 +1,71 @@
+//
+//  Server.hpp
+//  Pestle
+//
+//  Created by Braeden Atlee on 10/7/17.
+//  Copyright © 2017 Braeden Atlee. All rights reserved.
+//
+
+#ifndef Server_hpp
+#define Server_hpp
+
+#include "Global.hpp"
+#include "Utility.hpp"
+
+class Room;
+class ClientConnection;
+class Packet;
+class Actor;
+
+struct ExceptionServer{
+    string reason;
+};
+
+struct NewClientInfo {
+    NewClientInfo(sockaddr_in address, int socketId) : address(address), socketId(socketId){}
+    sockaddr_in address;
+    int socketId;
+};
+
+class Server{
+    
+    vector<ClientConnection*> clientConnections;
+    
+    int socketId;
+    sockaddr_in serverAddress;
+    
+    sharedQueue<NewClientInfo> newClientQueue;
+    
+    bool serverRunning = false;
+    
+    int nextActorId = 1;
+    
+    thread listenThread;
+    
+    Uint64 now = SDL_GetPerformanceCounter();
+    Uint64 last = 0;
+    double delta = 0;
+    
+public:
+    
+    Room* room;
+    
+    Server(int port);
+    ~Server();
+    
+    bool isServerRunning(){return serverRunning;}
+    
+    void listenForClients();
+    
+    void handleNewClient(NewClientInfo info);
+    
+    void sendToAll(Packet* packet, unsigned char size);
+    void sendToAllBut(int clientId, Packet* packet, unsigned char size);
+    
+    void newActor(Actor* actor);
+    
+    void update();
+    
+};
+
+#endif /* Server_hpp */
