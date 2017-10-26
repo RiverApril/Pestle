@@ -31,15 +31,13 @@
 
 #define DRAW_DEBUG 0
 
-typedef unsigned char byte;
-
 using namespace std;
 
 
-#define SAVE(a) (saveToBuffer(bufferPointer, &(a), sizeof(a)))
-#define LOAD(a) (loadFromBuffer(bufferPointer, &(a), sizeof(a)))
+#define SAVE(a) (saveToBuffer(dataPointer, &(a), sizeof(a)))
+#define LOAD(a) (loadFromBuffer(dataPointer, &(a), sizeof(a)))
 
-void saveToBuffer(byte*& dataPointer, void* obj, size_t size);
-void loadFromBuffer(byte*& dataPointer, void* obj, size_t size);
+void saveToBuffer(unsigned char*& dataPointer, void* obj, size_t size);
+void loadFromBuffer(unsigned char*& dataPointer, void* obj, size_t size);
 
 #endif /* Global_h */

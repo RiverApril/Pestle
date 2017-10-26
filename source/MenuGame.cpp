@@ -36,7 +36,7 @@ void MenuGame::update(Display* display, double delta){
             }
         }
         
-        if(playerActor){
+        if(player){
             
             double vx = 0;
             double vy = 0;
@@ -56,31 +56,32 @@ void MenuGame::update(Display* display, double delta){
                 vy += speed;
             }
 
-            playerActor->vx = vx;
-            playerActor->vy = vy;
+            player->vx = vx;
+            player->vy = vy;
             {
-                auto packet = Packet_BI_ActorMove(playerActor);
-                logic->client->sendToServer(&packet, (unsigned char)sizeof(packet));
+                auto* packet = new Packet_BI_ActorMove(player);
+                logic->client->sendToServer(packet);
+                delete packet;
             }
 
             int wW, wH;
             SDL_GetWindowSize(display->getWindow(), &wW, &wH);
 
-            viewXOff += ((playerActor->px - wW/2) - viewXOff) / 4;
-            viewYOff += ((playerActor->py - wH/2) - viewYOff) / 4;
+            viewXOff += ((player->px - wW/2) - viewXOff) / 4;
+            viewYOff += ((player->py - wH/2) - viewYOff) / 4;
             
             if(room){
                 room->update(display, delta, viewXOff, viewYOff);
             }
             
         }else{
-            playerActor = room->getActor(logic->client->getClientId());
-            if(playerActor){
-                cout << "Found Player Actor: " << playerActor->getId() << "\n";
+            player = dynamic_cast<ActorPlayer*>(room->getActor(logic->client->getClientId()));
+            if(player){
+                cout << "Found Player Actor: " << player->getId() << "\n";
             }
         }
         
-    }catch(ExceptionClient e){
+    }catch(NetworkException e){
         cout << "Client Error: " << e.reason << "\n";
         logic->changeMenu(new MenuMain(logic));
     }

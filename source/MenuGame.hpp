@@ -14,7 +14,7 @@
 
 class Display;
 class Room;
-class Actor;
+class ActorPlayer;
 
 class MenuGame : public Menu {
     
@@ -24,7 +24,7 @@ class MenuGame : public Menu {
 public:
     
     Room* room = nullptr;
-    Actor* playerActor = nullptr;
+    ActorPlayer* player = nullptr;
     
     MenuGame(Logic* logic);
     ~MenuGame();

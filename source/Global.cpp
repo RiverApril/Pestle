@@ -8,12 +8,12 @@
 
 #include "Global.hpp"
 
-void saveToBuffer(byte*& dataPointer, void* obj, size_t size){
+void saveToBuffer(unsigned char*& dataPointer, void* obj, size_t size){
     memcpy(dataPointer, obj, size);
     dataPointer += size;
 }
 
-void loadFromBuffer(byte*& dataPointer, void* obj, size_t size){
+void loadFromBuffer(unsigned char*& dataPointer, void* obj, size_t size){
     memcpy(obj, dataPointer, size);
     dataPointer += size;
 }

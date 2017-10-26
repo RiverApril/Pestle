@@ -16,13 +16,13 @@ Client::Client(MenuGame* game, string ip, int port) : game(game){
     
     socketId = socket(AF_INET, SOCK_STREAM, 0);
     if(socketId < 0){
-        throw ExceptionClient{"Failed to open client socket"};
+        throw NetworkException{"Failed to open client socket"};
     }
     
     hostent* server = gethostbyname(ip.c_str());
     
     if(!server){
-        throw ExceptionClient{"Failed to resolve server"};
+        throw NetworkException{"Failed to resolve server"};
     }
     
     serverAddress = sockaddr_in{0};
@@ -31,7 +31,7 @@ Client::Client(MenuGame* game, string ip, int port) : game(game){
     serverAddress.sin_port = htons(port);
     
     if(connect(socketId, (sockaddr *) &serverAddress, sizeof(serverAddress)) < 0){
-        throw ExceptionClient{"Failed to connect to server: " + to_string(errno)};
+        throw NetworkException{"Failed to connect to server: " + to_string(errno)};
     }
     
     //fcntl(socketId, F_SETFL, O_NONBLOCK); want blocking
@@ -48,48 +48,9 @@ Client::~Client(){
     close(socketId);
 }
 
-bool Client::tryToWrite(int socket, void* data, size_t size){
-    auto writeSize = write(socket, data, size);
-    if(writeSize == size){
-        return true;
-    }else{
-        if(writeSize != -1){
-            cout << "Only wrote " << writeSize << " bytes out of " << size << endl;
-        }
-        throw ExceptionClient{"Failed to write to socket"};
-    }
-}
-
-bool Client::tryToRead(int socket, void* data, size_t size){
-    auto readSize = read(socket, data, size);
-    if(readSize == size){
-        return true;
-    }else{
-        if(readSize != -1){
-            cout << "Only read " << readSize << " bytes out of " << size << endl;
-        }else{
-            if(errno == EAGAIN || errno == EWOULDBLOCK){
-                return false;
-            }
-        }
-    }
-    throw ExceptionClient{"Failed to read from socket"};
-}
-
-void Client::sendToServer(Packet* packet, unsigned char size){
+void Client::sendToServer(Packet* packet){
     unique_lock<mutex> lock(writeMutex);
-    
-    pid packetId = packet->getID();
-    
-    // send packet id
-    tryToWrite(socketId, &packetId, sizeof(packetId));
-    
-    // send packet size
-    tryToWrite(socketId, &size, sizeof(size));
-    
-    // send packet itself
-    tryToWrite(socketId, packet, size);
-    
+    sendToSocket(socketId, packet);
 }
 
 void Client::listenToServer(){
@@ -101,7 +62,7 @@ void Client::listenToServer(){
                 
                 //cout << "Recieved Packet with id: " << packetId << endl;
                 
-                unsigned char packetSize = 0;
+                packet_size_t packetSize = 0;
                 
                 if(tryToRead(socketId, &packetSize, sizeof(packetSize))){
                     
@@ -111,7 +72,7 @@ void Client::listenToServer(){
                     
                     if(tryToRead(socketId, packetPointer, packetSize)){
                         
-                        packetQueue.push(PacketInfo(packetId, packetPointer));
+                        packetQueue.push(PacketInfo(packetId, packetPointer, packetSize));
                         
                     }else{
                         free(packetPointer);
@@ -120,7 +81,7 @@ void Client::listenToServer(){
                 
             }
         }
-    }catch(ExceptionClient e){
+    }catch(NetworkException e){
         cout << "Client Error: " << e.reason << "\n";
         connectedToServer = false;
         close(socketId);
@@ -132,15 +93,15 @@ void Client::update(){
         PacketInfo packetInfo = packetQueue.front();
         packetQueue.pop();
         try{
-            handlePacket(packetInfo.packetId, packetInfo.packetPointer);
-        }catch(ExceptionClient e){
+            handlePacket(packetInfo.packetId, packetInfo.packetPointer, packetInfo.packetSize);
+        }catch(NetworkException e){
             cout << "Client Error: " << e.reason << "\n";
         }
         free(packetInfo.packetPointer);
     }
 }
 
-void Client::handlePacket(pid packetId, void* packetPointer){
+void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
     
     switch (packetId) {
         case PID_S2C_TellClientsID: {
@@ -151,31 +112,33 @@ void Client::handlePacket(pid packetId, void* packetPointer){
                 clientId = packet->newClientId;
                 cout << "Client got an id: " << clientId << endl;
             }else{
-                throw ExceptionClient{"Recieved new ID, but already has an ID."};
+                throw NetworkException{"Recieved new ID, but already has an ID."};
             }
             
             break;
         }
         case PID_S2C_NewActor: {
+
+            auto* packet = (Packet_S2C_NewActor*)(new Packet_S2C_NewActor((unsigned char*)packetPointer));
             
-            auto* packet = (Packet_S2C_NewActor*)packetPointer;
-            
-            Actor* a = new Actor(packet->actorCopy);
+            Actor* a = packet->getActor();
             game->room->replaceActor(a);
             cout << "New Actor(" << a->getId() << ")\n";
+
+            delete packet;
             break;
         }
         case PID_BI_ActorMove: {
             auto* packet = (Packet_BI_ActorMove*)packetPointer;
             
-            Actor* actor = game->room->getActor(packet->actorId);
-            if(actor){
-                actor->px = packet->px;
-                actor->py = packet->py;
-                actor->vx = packet->vx;
-                actor->vy = packet->vy;
+            ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(game->room->getActor(packet->actorId));
+            if(actorMoving){
+                actorMoving->px = packet->px;
+                actorMoving->py = packet->py;
+                actorMoving->vx = packet->vx;
+                actorMoving->vy = packet->vy;
             }else{
-                cout << "Failed to find actor with id: " << packet->actorId;
+                cout << "Failed to find actor with id: " << packet->actorId << "\n";
             }
             break;
         }
@@ -193,7 +156,7 @@ void Client::handlePacket(pid packetId, void* packetPointer){
             break;
         }
         default: {
-            throw ExceptionClient{string("Unknown packet with id: ") + to_string(packetId)};
+            throw NetworkException{string("Unknown packet with id: ") + to_string(packetId)};
         }
     }
 }

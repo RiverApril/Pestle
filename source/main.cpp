@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
             while(server->isServerRunning()){
                 server->update();
             }
-        }catch(ExceptionServer e){
+        }catch(NetworkException e){
             cout << "Server Error: " << e.reason << "\n";
         }
         

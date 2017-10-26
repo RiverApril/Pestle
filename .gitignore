@@ -4,5 +4,9 @@
 #Executable shortcut
 Pestle
 
+#VSCode
+.vscode/
+binary/
+
 #Notes
 notes.txt

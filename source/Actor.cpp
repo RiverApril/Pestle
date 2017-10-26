@@ -11,12 +11,8 @@
 #include "Room.hpp"
 #include "Geometry.hpp"
 
-Actor::Actor(int id, double px, double py, double rx, double ry) : id(id), px(px), py(py), rx(rx), ry(ry){
-    vx = 0;
-    vy = 0;
-}
-
-void Actor::update(Room* room, Display* display, double delta, int xOff, int yOff){
+void ActorMoving::update(Room* room, Display* display, double delta, int xOff, int yOff){
+    Actor::update(room, display, delta, xOff, yOff);
     
     double dx = vx * delta;
     double dy = vy * delta;
@@ -69,4 +65,31 @@ void Actor::update(Room* room, Display* display, double delta, int xOff, int yOf
         }
     }
 }
+
+
+Actor* Actor::loadActor(unsigned char*& dataPointer){
+    ActorType type;
+    LOAD(type);
+
+    Actor* actor;
+
+    switch(type){
+        case ACTOR_TYPE_Player:{
+            actor = new ActorPlayer(type);
+            break;
+        }
+        case ACTOR_TYPE_None:{
+            cout << "Error trying to make an actor, the type is none.\n";
+            break;
+        }
+    }
+
+    actor->load(dataPointer);
+    return actor;
+}
+
+void Actor::saveActor(Actor* actor, unsigned char*& dataPointer){
+    actor->save(dataPointer);
+}
+
 

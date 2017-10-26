@@ -12,10 +12,11 @@
 #include "Global.hpp"
 #include "Packet.hpp"
 #include "Utility.hpp"
+#include "Network.hpp"
 
 class Server;
 
-class ClientConnection{
+class ClientConnection : public NetworkParticipant{
     
     Server* server;
     
@@ -34,18 +35,15 @@ class ClientConnection{
     
     void listenToClient();
     
-    bool tryToWrite(int socket, void* data, size_t size);
-    bool tryToRead(int socket, void* data, size_t size);
-    
 public:
     ClientConnection(Server* server, sockaddr_in address, int socketId, int clientId);
     ~ClientConnection();
     
     int getClientId(){ return clientId; }
     
-    void handlePacket(pid packetId, void* packetPointer);
+    void handlePacket(pid packetId, void* packetPointer, packet_size_t packetSize);
     
-    void sendToClient(Packet* packet, unsigned char size);
+    void sendToClient(Packet* packet);
     
     void update();
     

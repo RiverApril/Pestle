@@ -12,14 +12,11 @@
 #include "Global.hpp"
 #include "Packet.hpp"
 #include "Utility.hpp"
-
-struct ExceptionClient{
-    string reason;
-};
+#include "Network.hpp"
 
 class MenuGame;
 
-class Client{
+class Client : public NetworkParticipant{
     
     mutex writeMutex;
     
@@ -42,17 +39,14 @@ class Client{
     
     void listenToServer();
     
-    void handlePacket(pid packetId, void* packetPointer);
-    
-    bool tryToWrite(int socket, void* data, size_t size);
-    bool tryToRead(int socket, void* data, size_t size);
+    void handlePacket(pid packetId, void* packetPointer, size_t packetSize);
 
     
 public:
     Client(MenuGame* game, string ip, int port);
     ~Client();
     
-    void sendToServer(Packet* packet, unsigned char size);
+    void sendToServer(Packet* packet);
     
     void update();
     

@@ -14,24 +14,101 @@
 class Display;
 class Room;
 
-class Actor{
+enum ActorType{
+    ACTOR_TYPE_None,
+    ACTOR_TYPE_Player
+};
+
+class Actor {
     int id;
-    
+    ActorType type;
+
 protected:
-    double rx, ry; // radius
-    
+    virtual void save(unsigned char*& dataPointer){SAVE(type); SAVE(id); SAVE(px); SAVE(py); }
+    virtual void load(unsigned char*& dataPointer){LOAD(id); LOAD(px); LOAD(py); } // intentionally not loading type
+
 public:
+    virtual size_t getSize(){ return sizeof(id) + sizeof(type) + sizeof(px) + sizeof(py); }
     
     double px, py; // position
-    double vx, vy; // velocity
+
+    int getId(){ return id; }
+    ActorType getType(){ return type; }
     
-    Actor(int id, double px, double py, double rx, double ry);
+    Actor(ActorType type): type(type){}
+    Actor(int id, ActorType type) : id(id), type(type), px(0), py(0){}
     virtual ~Actor(){}
     
-    void update(Room* room, Display* display, double delta, int xOff, int yOff);
-    
-    int getId(){ return id; }
+    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){}
+
+
+    static Actor* loadActor(unsigned char*& dataPointer);
+    static void saveActor(Actor* actor, unsigned char*& dataPointer);
     
 };
+
+class ActorMoving : public Actor {
+protected:
+    virtual void save(unsigned char*& dataPointer){ Actor::save(dataPointer); SAVE(vx); SAVE(vy); SAVE(rx); SAVE(ry); };
+    virtual void load(unsigned char*& dataPointer){ Actor::load(dataPointer); LOAD(vx); LOAD(vy); LOAD(rx); LOAD(ry); };
+
+public:
+    virtual size_t getSize(){ return Actor::getSize()+sizeof(vx)+sizeof(vy)+sizeof(rx)+sizeof(ry); }
+    
+    double vx, vy; // velocity
+    double rx, ry; // radius
+
+    ActorMoving(ActorType type): Actor(type){}
+    ActorMoving(int id, ActorType type, double rx, double ry): Actor(id, type), rx(rx), ry(ry), vx(0), vy(0){}
+    virtual ~ActorMoving(){}
+
+    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff);
+};
+
+class ActorLiving : public ActorMoving {
+protected:
+    virtual void save(unsigned char*& dataPointer){ ActorMoving::save(dataPointer); SAVE(hp); SAVE(maxHp); SAVE(alive); };
+    virtual void load(unsigned char*& dataPointer){ ActorMoving::load(dataPointer); LOAD(hp); LOAD(maxHp); LOAD(alive); };
+
+public:
+    virtual size_t getSize(){ return ActorMoving::getSize()+sizeof(hp)+sizeof(maxHp)+sizeof(alive); }
+    
+    double hp, maxHp;
+    bool alive;
+
+    ActorLiving(ActorType type): ActorMoving(type){}
+    ActorLiving(int id, ActorType type, double rx, double ry, double maxHp): ActorMoving(id, type, rx, ry), maxHp(maxHp), hp(maxHp), alive(true){}
+    virtual ~ActorLiving(){}
+
+    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){
+        ActorMoving::update(room, display, delta, xOff, yOff);
+        if(hp <= 0 && alive){
+            alive = false;
+            die();
+        }
+    }
+
+    virtual void die(){}
+};
+
+class ActorPlayer : public ActorLiving {
+protected:
+    virtual void save(unsigned char*& dataPointer){ ActorMoving::save(dataPointer); SAVE(hp); SAVE(maxHp); SAVE(alive); };
+    virtual void load(unsigned char*& dataPointer){ ActorMoving::load(dataPointer); LOAD(hp); LOAD(maxHp); LOAD(alive); };
+
+public:
+    virtual size_t getSize(){ return ActorMoving::getSize()+sizeof(hp)+sizeof(maxHp)+sizeof(alive); }
+    
+    ActorPlayer(): ActorLiving(ACTOR_TYPE_Player){}
+    ActorPlayer(int id): ActorLiving(id, ACTOR_TYPE_Player, (FONT_W/2.0)-1, (FONT_H/2.0)-2, 10){}
+    virtual ~ActorPlayer(){}
+
+    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){
+        ActorLiving::update(room, display, delta, xOff, yOff);
+    }
+
+    virtual void die(){}
+};
+
 
 #endif /* Actor_hpp */

@@ -26,58 +26,9 @@ ClientConnection::~ClientConnection(){
 }
 
 
-bool ClientConnection::tryToWrite(int socket, void* data, size_t size){
-    auto writeSize = write(socket, data, size);
-    if(writeSize == size){
-        return true;
-    }else{
-        if(writeSize != -1){
-            cout << "Only wrote " << writeSize << " bytes out of " << size << endl;
-        }
-        throw ExceptionServer{"Failed to write to socket"};
-    }
-}
-
-bool ClientConnection::tryToRead(int socket, void* data, size_t size){
-    auto readSize = read(socket, data, size);
-    if(readSize == size){
-        return true;
-    }else{
-        if(readSize != -1){
-            cout << "Only read " << readSize << " / " << size << " bytes" << endl;
-        }else{
-            if(errno == EAGAIN || errno == EWOULDBLOCK){
-                return false;
-            }
-        }
-    }
-    throw ExceptionServer{"Failed to read from socket"};
-}
-
-
-void ClientConnection::sendToClient(Packet* packet, unsigned char size){
-    
-    //cout << "Sending packet(" << packet->getID() << ") to Client(" << clientId << ")\n";
-    
+void ClientConnection::sendToClient(Packet* packet){
     unique_lock<mutex> lock(writeMutex);
-    
-    pid packetId = packet->getID();
-    
-    // send packet id
-    if(!tryToWrite(socketId, &packetId, sizeof(packetId))){
-        throw ExceptionServer{"Failed to write to socket"};
-    }
-    
-    // send packet size
-    if(!tryToWrite(socketId, &size, sizeof(size))){
-        throw ExceptionServer{"Failed to write to socket"};
-    }
-    
-    // send packet itself
-    if(!tryToWrite(socketId, packet, size)){
-        throw ExceptionServer{"Failed to write to socket"};
-    }
-    
+    sendToSocket(socketId, packet);
 }
 
 void ClientConnection::listenToClient(){
@@ -89,7 +40,7 @@ void ClientConnection::listenToClient(){
                 
                 //cout << "(" << clientId << ") Recieved Packet with id: " << packetId << endl;
                 
-                unsigned char packetSize = 0;
+                packet_size_t packetSize = 0;
                 
                 if(tryToRead(socketId, &packetSize, sizeof(packetSize))){
                     
@@ -98,7 +49,7 @@ void ClientConnection::listenToClient(){
                     void* packetPointer = malloc(packetSize);
                     
                     if(tryToRead(socketId, packetPointer, packetSize)){
-                        packetQueue.push(PacketInfo(packetId, packetPointer));
+                        packetQueue.push(PacketInfo(packetId, packetPointer, packetSize));
                     }else{
                         free(packetPointer);
                     }
@@ -107,7 +58,7 @@ void ClientConnection::listenToClient(){
                 
             }
         }
-    }catch(ExceptionServer e){
+    }catch(NetworkException e){
         cout << "Client Connection Error: " << e.reason << "\n";
         clientIsConnected = false;
         close(socketId);
@@ -119,34 +70,34 @@ void ClientConnection::update(){
         PacketInfo packetInfo = packetQueue.front();
         packetQueue.pop();
         
-        handlePacket(packetInfo.packetId, packetInfo.packetPointer);
+        handlePacket(packetInfo.packetId, packetInfo.packetPointer, packetInfo.packetSize);
         free(packetInfo.packetPointer);
     }
 }
 
 
 
-void ClientConnection::handlePacket(pid packetId, void* packetPointer){
+void ClientConnection::handlePacket(pid packetId, void* packetPointer, packet_size_t packetSize){
     switch (packetId) {
         
         case PID_BI_ActorMove: {
             auto* packet = (Packet_BI_ActorMove*)packetPointer;
             
-            Actor* actor = server->room->getActor(packet->actorId);
-            if(actor){
-                actor->px = packet->px;
-                actor->py = packet->py;
-                actor->vx = packet->vx;
-                actor->vy = packet->vy;
+            ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(server->room->getActor(packet->actorId));
+            if(actorMoving){
+                actorMoving->px = packet->px;
+                actorMoving->py = packet->py;
+                actorMoving->vx = packet->vx;
+                actorMoving->vy = packet->vy;
                 //cout << "actor(" << actor->getId() << ") moved\n";
             }else{
-                cout << "Failed to find actor with id: " << packet->actorId;
+                cout << "Failed to find actor with id: " << packet->actorId << "\n";
             }
             break;
         }
             
         default: {
-            throw ExceptionServer{string("Unknown packet with id: ") + to_string(packetId)};
+            throw NetworkException{string("Unknown packet with id: ") + to_string(packetId)};
         }
     }
 }

@@ -17,10 +17,6 @@ class ClientConnection;
 class Packet;
 class Actor;
 
-struct ExceptionServer{
-    string reason;
-};
-
 struct NewClientInfo {
     NewClientInfo(sockaddr_in address, int socketId) : address(address), socketId(socketId){}
     sockaddr_in address;
@@ -59,8 +55,8 @@ public:
     
     void handleNewClient(NewClientInfo info);
     
-    void sendToAll(Packet* packet, unsigned char size);
-    void sendToAllBut(int clientId, Packet* packet, unsigned char size);
+    void sendToAll(Packet* packet);
+    void sendToAllBut(int clientId, Packet* packet);
     
     void newActor(Actor* actor);
     

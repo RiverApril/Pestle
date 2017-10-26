@@ -36,7 +36,7 @@ void MenuMain::update(Display* display, double delta){
     try{
         // no local for now, just connect to server:
         logic->client = new Client(game, ip, port);
-    }catch(ExceptionClient e){
+    }catch(NetworkException e){
         cout << "Network Error: " << e.reason << "\n";
         throw ExceptionGameQuit({"Network Error, quitting."});
     }
