@@ -20,6 +20,7 @@
 #include <netdb.h> 
 #include <unistd.h> 
 #include <fcntl.h>
+#include <chrono>
 
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
@@ -31,6 +32,8 @@
 
 #define DRAW_DEBUG 0
 #define STATS_DEBUG 1
+
+#define SERVER_UPDATE_DELAY (1.0/60.0)
 
 using namespace std;
 

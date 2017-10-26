@@ -164,6 +164,11 @@ void Server::update() {
     last = now;
     now = SDL_GetPerformanceCounter();
     delta = ((now - last) * 1000.0) / SDL_GetPerformanceFrequency();
+
+    if(delta < SERVER_UPDATE_DELAY){
+        using namespace chrono_literals;
+        this_thread::sleep_for((SERVER_UPDATE_DELAY - delta)*1s);
+    }
     
     while(!newClientQueue.empty()){
         NewClientInfo info = newClientQueue.front();
