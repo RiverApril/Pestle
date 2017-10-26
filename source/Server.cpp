@@ -10,6 +10,7 @@
 #include "Packet.hpp"
 #include "ClientConnection.hpp"
 #include "Room.hpp"
+#include "ActorPlayer.hpp"
 
 Server::Server(int port){
     
@@ -154,7 +155,7 @@ void Server::handleNewClient(NewClientInfo info){
     }
     
     // Create a new actor for the player
-    Actor* playerActor = new ActorPlayer(client->getClientId());
+    ActorPlayer* playerActor = new ActorPlayer(client->getClientId());
     newActor(playerActor);
 }
 
@@ -184,7 +185,7 @@ void Server::update() {
     for(auto actorPair : room->actors){
         ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(actorPair.second);
 
-        if(actorMoving){
+        if(actorMoving && actorMoving->hasMoved){
             auto* packet = new Packet_BI_ActorMove(actorMoving);
             sendToAllBut(packet->actorId, packet);
             delete packet;

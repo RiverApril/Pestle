@@ -39,7 +39,8 @@ public:
     Actor(int id, ActorType type) : id(id), type(type), px(0), py(0){}
     virtual ~Actor(){}
     
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){}
+    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff);
+    virtual char getSymbol(){ return '?'; }
 
 
     static Actor* loadActor(unsigned char*& dataPointer);
@@ -57,6 +58,11 @@ public:
     
     double vx, vy; // velocity
     double rx, ry; // radius
+
+    // Not synchronized between client and server
+    double lastvx, lastvy;
+    double lastpx, lastpy;
+    bool hasMoved = false;
 
     ActorMoving(ActorType type): Actor(type){}
     ActorMoving(int id, ActorType type, double rx, double ry): Actor(id, type), rx(rx), ry(ry), vx(0), vy(0){}
@@ -86,25 +92,6 @@ public:
             alive = false;
             die();
         }
-    }
-
-    virtual void die(){}
-};
-
-class ActorPlayer : public ActorLiving {
-protected:
-    virtual void save(unsigned char*& dataPointer){ ActorMoving::save(dataPointer); SAVE(hp); SAVE(maxHp); SAVE(alive); };
-    virtual void load(unsigned char*& dataPointer){ ActorMoving::load(dataPointer); LOAD(hp); LOAD(maxHp); LOAD(alive); };
-
-public:
-    virtual size_t getSize(){ return ActorMoving::getSize()+sizeof(hp)+sizeof(maxHp)+sizeof(alive); }
-    
-    ActorPlayer(): ActorLiving(ACTOR_TYPE_Player){}
-    ActorPlayer(int id): ActorLiving(id, ACTOR_TYPE_Player, (FONT_W/2.0)-1, (FONT_H/2.0)-2, 10){}
-    virtual ~ActorPlayer(){}
-
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){
-        ActorLiving::update(room, display, delta, xOff, yOff);
     }
 
     virtual void die(){}

@@ -11,7 +11,7 @@
 #include "Logic.hpp"
 #include "Room.hpp"
 #include "Display.hpp"
-#include "Actor.hpp"
+#include "ActorPlayer.hpp"
 
 
 MenuGame::MenuGame(Logic* logic) : Menu(logic){
@@ -58,7 +58,7 @@ void MenuGame::update(Display* display, double delta){
 
             player->vx = vx;
             player->vy = vy;
-            {
+            if(player->hasMoved){
                 auto* packet = new Packet_BI_ActorMove(player);
                 logic->client->sendToServer(packet);
                 delete packet;

@@ -7,13 +7,19 @@
 //
 
 #include "Actor.hpp"
+#include "ActorPlayer.hpp"
 #include "Display.hpp"
 #include "Room.hpp"
 #include "Geometry.hpp"
 
+void Actor::update(Room* room, Display* display, double delta, int xOff, int yOff){
+    if(display){
+        display->drawChar(getSymbol(), px-FONT_W/2-xOff, py-FONT_H/2-yOff);
+    }
+}
+
 void ActorMoving::update(Room* room, Display* display, double delta, int xOff, int yOff){
-    Actor::update(room, display, delta, xOff, yOff);
-    
+
     double dx = vx * delta;
     double dy = vy * delta;
     
@@ -51,9 +57,8 @@ void ActorMoving::update(Room* room, Display* display, double delta, int xOff, i
     
     px += dx;
     py += dy;
-    
+
     if(display){
-        display->drawChar('@', px-FONT_W/2-xOff, py-FONT_H/2-yOff);
         if(DRAW_DEBUG){
             SDL_Rect rect;
             rect.x = px-rx-xOff;
@@ -64,6 +69,15 @@ void ActorMoving::update(Room* room, Display* display, double delta, int xOff, i
             SDL_RenderDrawRect(display->getRenderer(), &rect);
         }
     }
+    
+    hasMoved = px != lastpx || py == lastpy || vx != lastvx || vy != lastvy;
+    
+    lastpx = px;
+    lastpy = py;
+    lastvx = vx;
+    lastvy = vy;
+
+    Actor::update(room, display, delta, xOff, yOff);
 }
 
 
