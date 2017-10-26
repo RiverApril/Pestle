@@ -33,6 +33,7 @@ struct PacketInfo{
 };
 
 struct Packet {
+    virtual ~Packet(){}
     virtual pid getID(){
         return PID_ERROR;
     }

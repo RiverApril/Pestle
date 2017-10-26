@@ -14,7 +14,7 @@
 
 class Room;
 class ClientConnection;
-class Packet;
+struct Packet;
 class Actor;
 
 struct NewClientInfo {
