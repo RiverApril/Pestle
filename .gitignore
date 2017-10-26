@@ -1,8 +1,8 @@
 #Xcode
 *.xcodeproj/
 
-#Executable shortcut
-Pestle
+#Executables
+Pestle_*
 
 #VSCode
 .vscode/
