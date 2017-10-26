@@ -19,7 +19,7 @@ class MenuGame;
 class Client : public NetworkParticipant{
     
     mutex writeMutex;
-    
+
     int clientId = -1;
     
     MenuGame* game;
@@ -53,6 +53,11 @@ public:
     bool isConnectedToServer(){ return connectedToServer; }
     
     int getClientId(){ return clientId; }
+    
+    #if STATS_DEBUG
+    int packetsReceivedCount = 0;
+    int packetsSentCount = 0;
+    #endif
     
 };
 

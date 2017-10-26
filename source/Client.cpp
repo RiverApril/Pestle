@@ -49,6 +49,9 @@ Client::~Client(){
 }
 
 void Client::sendToServer(Packet* packet){
+    #if STATS_DEBUG
+    packetsSentCount++;
+    #endif
     unique_lock<mutex> lock(writeMutex);
     sendToSocket(socketId, packet);
 }
@@ -102,6 +105,10 @@ void Client::update(){
 }
 
 void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
+    
+    #if STATS_DEBUG
+    packetsReceivedCount++;
+    #endif
     
     switch (packetId) {
         case PID_S2C_TellClientsID: {

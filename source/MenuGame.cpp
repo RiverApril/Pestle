@@ -34,6 +34,10 @@ void MenuGame::update(Display* display, double delta){
             }else{
                 logic->changeMenu(new MenuMain(logic));
             }
+            #if STATS_DEBUG
+            display->drawString("Packets in: "+to_string(logic->client->packetsReceivedCount), 0, 0);
+            display->drawString("Packets out: "+to_string(logic->client->packetsSentCount), 0, FONT_H);
+            #endif
         }
         
         if(player){

@@ -30,6 +30,7 @@
 #define FONT_H 12
 
 #define DRAW_DEBUG 0
+#define STATS_DEBUG 1
 
 using namespace std;
 
