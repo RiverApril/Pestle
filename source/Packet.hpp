@@ -13,7 +13,7 @@
 #include "TileData.hpp"
 #include "Network.hpp"
 
-#define OVERLOAD_PACKET_SEND_DATA virtual void sendData(NetworkParticipant* n, int socket){n->tryToWrite(socket, this, sizeof(*this));}
+#define OVERLOAD_PACKET_SEND_DATA virtual void sendData(NetworkParticipant* n, socket_t socket){n->tryToWrite(socket, this, sizeof(*this));}
 #define OVERLOAD_PACKET_GET_SIZE virtual packet_size_t getSize(){ return sizeof(*this); }
 
 enum pid{
@@ -37,7 +37,7 @@ struct Packet {
     virtual pid getID(){
         return PID_ERROR;
     }
-    virtual void sendData(NetworkParticipant* n, int socket){
+    virtual void sendData(NetworkParticipant* n, socket_t socket){
         n->tryToWrite(socket, this, sizeof(*this));
     }
     virtual packet_size_t getSize(){ return 0; }
@@ -71,7 +71,7 @@ struct Packet_S2C_NewActor : Packet {
         return sizeof(dataSize) + dataSize;
     }
 
-    virtual void sendData(NetworkParticipant* n, int socket){
+    virtual void sendData(NetworkParticipant* n, socket_t socket){
         unsigned char* allData = (unsigned char*)malloc(sizeof(dataSize)+dataSize);
         memcpy(allData, &dataSize, sizeof(dataSize));
         memcpy(allData+sizeof(dataSize), data, dataSize);

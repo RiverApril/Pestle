@@ -13,9 +13,10 @@
 
 
 Client::Client(MenuGame* game, string ip, int port) : game(game){
-    
-    socketId = socket(AF_INET, SOCK_STREAM, 0);
-    if(socketId < 0){
+
+
+    socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if(socketId == INVALID_SOCKET){
         throw NetworkException{"Failed to open client socket"};
     }
     
@@ -25,13 +26,13 @@ Client::Client(MenuGame* game, string ip, int port) : game(game){
         throw NetworkException{"Failed to resolve server"};
     }
     
-    serverAddress = sockaddr_in{0};
-    
+    //serverAddress = sockaddr_in{0};
     serverAddress.sin_family = AF_INET;
+    serverAddress.sin_addr.s_addr = inet_addr(ip.c_str());
     serverAddress.sin_port = htons(port);
     
-    if(connect(socketId, (sockaddr *) &serverAddress, sizeof(serverAddress)) < 0){
-        throw NetworkException{"Failed to connect to server: " + to_string(errno)};
+    if(connect(socketId, (sockaddr *) &serverAddress, sizeof(serverAddress)) == SOCKET_ERROR){
+        throw NetworkException{"Failed to connect to server: " + GET_SOCKET_ERROR};
     }
     
     //fcntl(socketId, F_SETFL, O_NONBLOCK); want blocking

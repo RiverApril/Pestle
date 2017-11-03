@@ -23,12 +23,13 @@ Server::Server(int port){
     room->generate();
 
     room->newActor(new ActorEnemy(nextActorId++));
+
     
     // AF_INET means internet domain instead of file domain
     // SOCK_STREAM means to use a stream instead of a block, so it chooses TCP
-    socketId = socket(AF_INET, SOCK_STREAM, 0);
+    socketId = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     
-    if(socketId < 0){
+    if(socketId == INVALID_SOCKET){
         throw NetworkException{"Failed to open server socket"};
     }
     
@@ -38,7 +39,7 @@ Server::Server(int port){
     serverAddress.sin_port = htons(port); // corrects byte order
     serverAddress.sin_addr.s_addr = INADDR_ANY; // Sets the address to be the server's address
     
-    if(bind(socketId, (const struct sockaddr*) &serverAddress, (socklen_t)sizeof(serverAddress)) < 0){
+    if(bind(socketId, (const struct sockaddr*) &serverAddress, (socklen_t)sizeof(serverAddress)) == SOCKET_ERROR){
         throw NetworkException{"Faild to bind socket to port"};
     }
     
@@ -72,8 +73,8 @@ void Server::listenForClients() {
         while(serverRunning) {
             sockaddr_in clientAddress{0};
             auto clientAddressLength = sizeof(clientAddress);
-            int clientSocketId = accept(socketId, (struct sockaddr*) &clientAddress, (socklen_t*) &clientAddressLength);
-            if(clientSocketId < 0){
+            socket_t clientSocketId = accept(socketId, (struct sockaddr*) &clientAddress, (socklen_t*) &clientAddressLength);
+            if(clientSocketId == INVALID_SOCKET){
                 throw NetworkException{"Failed to accept client connection"};
             }else{
                 newClientQueue.push(NewClientInfo(clientAddress, clientSocketId));

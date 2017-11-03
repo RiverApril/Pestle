@@ -27,7 +27,7 @@ class Client : public NetworkParticipant{
     string ip;
     int port;
     
-    int socketId;
+    socket_t socketId;
     
     sockaddr_in serverAddress;
     

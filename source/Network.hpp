@@ -21,10 +21,10 @@ struct NetworkException {
 
 struct NetworkParticipant{
 
-    bool tryToWrite(int socket, void* data, packet_size_t size);
-    bool tryToRead(int socket, void* data, packet_size_t size);
+    bool tryToWrite(socket_t socket, void* data, packet_size_t size);
+    bool tryToRead(socket_t socket, void* data, packet_size_t size);
 
-    void sendToSocket(int socket, Packet* packet);
+    void sendToSocket(socket_t socket, Packet* packet);
 
 };
 
