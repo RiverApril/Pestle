@@ -105,7 +105,7 @@ void Client::update(){
     }
 }
 
-void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
+void Client::handlePacket(pid packetId, void* packetPointer, packet_size_t packetSize){
     
     #if STATS_DEBUG
     packetsReceivedCount++;

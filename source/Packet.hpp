@@ -23,10 +23,10 @@ enum pid{
 };
 
 struct PacketInfo{
-    PacketInfo(pid packetId, void* packetPointer, size_t packetSize) : packetId(packetId), packetPointer(packetPointer), packetSize(packetSize){}
+    PacketInfo(pid packetId, void* packetPointer, packet_size_t packetSize) : packetId(packetId), packetPointer(packetPointer), packetSize(packetSize){}
     pid packetId;
     void* packetPointer;
-    size_t packetSize;
+    packet_size_t packetSize;
 };
 
 struct Packet {
@@ -97,7 +97,7 @@ struct Packet_S2C_NewActor : Packet {
         return actor;
     }
 
-    size_t dataSize;
+    packet_size_t dataSize;
     unsigned char* data;
 };
 

@@ -32,7 +32,7 @@ public:
     // Not saved
     Actor* target = nullptr;
 
-    virtual size_t getSize(){
+    virtual packet_size_t getSize(){
         return ActorLiving::getSize() + sizeof(targetId) + sizeof(moveSpeed);
     }
     

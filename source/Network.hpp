@@ -11,8 +11,6 @@
 
 #include "Global.hpp"
 
-typedef unsigned short packet_size_t;
-
 struct Packet;
 
 struct NetworkException {

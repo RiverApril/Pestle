@@ -21,7 +21,7 @@ protected:
     };
 
 public:
-    virtual size_t getSize(){
+    virtual packet_size_t getSize(){
         return ActorLiving::getSize();
     }
     

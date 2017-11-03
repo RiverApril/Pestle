@@ -39,7 +39,7 @@ class Client : public NetworkParticipant{
     
     void listenToServer();
     
-    void handlePacket(pid packetId, void* packetPointer, size_t packetSize);
+    void handlePacket(pid packetId, void* packetPointer, packet_size_t packetSize);
 
     
 public:

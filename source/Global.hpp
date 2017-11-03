@@ -65,10 +65,13 @@ typedef int socket_t;
 using namespace std;
 
 
+typedef unsigned short packet_size_t;
+
+
 #define SAVE(a) (saveToBuffer(dataPointer, &(a), sizeof(a)))
 #define LOAD(a) (loadFromBuffer(dataPointer, &(a), sizeof(a)))
 
-void saveToBuffer(unsigned char*& dataPointer, void* obj, size_t size);
-void loadFromBuffer(unsigned char*& dataPointer, void* obj, size_t size);
+void saveToBuffer(unsigned char*& dataPointer, void* obj, packet_size_t size);
+void loadFromBuffer(unsigned char*& dataPointer, void* obj, packet_size_t size);
 
 #endif /* Global_h */

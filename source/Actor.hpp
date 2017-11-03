@@ -29,7 +29,7 @@ protected:
     virtual void load(unsigned char*& dataPointer){LOAD(id); LOAD(px); LOAD(py); } // intentionally not loading type
 
 public:
-    virtual size_t getSize(){ return sizeof(id) + sizeof(type) + sizeof(px) + sizeof(py); }
+    virtual packet_size_t getSize(){ return sizeof(id) + sizeof(type) + sizeof(px) + sizeof(py); }
     
     double px, py; // position
 
@@ -55,7 +55,7 @@ protected:
     virtual void load(unsigned char*& dataPointer){ Actor::load(dataPointer); LOAD(vx); LOAD(vy); LOAD(rx); LOAD(ry); };
 
 public:
-    virtual size_t getSize(){ return Actor::getSize()+sizeof(vx)+sizeof(vy)+sizeof(rx)+sizeof(ry); }
+    virtual packet_size_t getSize(){ return Actor::getSize()+sizeof(vx)+sizeof(vy)+sizeof(rx)+sizeof(ry); }
     
     double vx, vy; // velocity
     double rx, ry; // radius
@@ -78,7 +78,7 @@ protected:
     virtual void load(unsigned char*& dataPointer){ ActorMoving::load(dataPointer); LOAD(hp); LOAD(maxHp); LOAD(alive); };
 
 public:
-    virtual size_t getSize(){ return ActorMoving::getSize()+sizeof(hp)+sizeof(maxHp)+sizeof(alive); }
+    virtual packet_size_t getSize(){ return ActorMoving::getSize()+sizeof(hp)+sizeof(maxHp)+sizeof(alive); }
     
     double hp, maxHp;
     bool alive;
