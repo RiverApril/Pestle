@@ -22,6 +22,11 @@ int main(int argc, char *argv[]){
             startClient = true;
         }
     }
+    
+    cout << "Size of int: " << sizeof(int) << "\n";
+    cout << "Size of double: " << sizeof(double) << "\n";
+    cout << "Size of size_t: " << sizeof(size_t) << "\n";
+    cout << "Size of packet_size_t: " << sizeof(packet_size_t) << "\n";
 
 
 #ifdef _WIN32

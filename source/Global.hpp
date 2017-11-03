@@ -20,6 +20,8 @@
 #include <chrono>
 #include <mutex>
 
+#include <cstdint>
+
 #ifdef _WIN32
 
 #include <winsock2.h>
