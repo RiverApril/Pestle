@@ -12,6 +12,7 @@
 bool NetworkParticipant::tryToWrite(socket_t socket, void* data, packet_size_t size){
     auto writeSize = write(socket, data, size);
     if(writeSize == size){
+        cout << "Wrote " << writeSize << " bytes\n";
         return true;
     }else{
         if(writeSize != -1){
@@ -24,6 +25,7 @@ bool NetworkParticipant::tryToWrite(socket_t socket, void* data, packet_size_t s
 bool NetworkParticipant::tryToRead(socket_t socket, void* data, packet_size_t size){
     auto readSize = read(socket, data, size);
     if(readSize == size){
+        cout << "Read " << readSize << " bytes\n";
         return true;
     }else{
         if(readSize != -1){
