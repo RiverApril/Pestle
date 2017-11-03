@@ -30,7 +30,7 @@ public:
     double moveSpeed = 0.04;
 
     // Not saved
-    Actor* target;
+    Actor* target = nullptr;
 
     virtual size_t getSize(){
         return ActorLiving::getSize() + sizeof(targetId) + sizeof(moveSpeed);
