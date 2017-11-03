@@ -28,7 +28,7 @@ void MenuMain::update(Display* display, double delta){
     cin >> ip;
     cout << "Enter port: ";
     cin >> port;*/
-    ip = "localhost";
+    ip = "127.0.0.1";
     port = 1337;
     
     MenuGame* game = new MenuGame(logic);

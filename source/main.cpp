@@ -22,6 +22,19 @@ int main(int argc, char *argv[]){
             startClient = true;
         }
     }
+
+
+#ifdef _WIN32
+    WSADATA wsaData;
+    int iResult;
+
+    // Initialize Winsock
+    iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    if (iResult != 0) {
+        printf("WSAStartup failed: %d\n", iResult);
+        return 1;
+    }
+#endif
     
     if(startClient){
         

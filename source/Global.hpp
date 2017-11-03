@@ -16,11 +16,30 @@
 #include <map>
 
 #include <thread>
+#include <fcntl.h>
+#include <chrono>
+#include <mutex>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <stdio.h>
+#pragma comment(lib, "Ws2_32.lib")
+
+#define close(a) closesocket(a)
+typedef SOCKET socket_t;
+#define write(a, b, c) send(a, (const char*)b, c, 0)
+#define read(a, b, c) recv(a, (char*)b, c, 0)
+
+#else
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <unistd.h> 
-#include <fcntl.h>
-#include <chrono>
+typedef int socket_t;
+#define INVALID_SOCKET (-1)
+#define SOCKET_ERROR (-1)
+
+#endif
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>

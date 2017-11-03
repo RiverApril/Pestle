@@ -10,3 +10,14 @@ binary/
 
 #Notes
 notes.txt
+
+#Windows
+*.dll
+
+#Visual Studio
+*.sln
+*.db
+*.opendb
+.vs/
+Debug/
+Pestle/

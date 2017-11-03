@@ -9,7 +9,7 @@
 #include "Network.hpp"
 #include "Packet.hpp"
 
-bool NetworkParticipant::tryToWrite(int socket, void* data, packet_size_t size){
+bool NetworkParticipant::tryToWrite(socket_t socket, void* data, packet_size_t size){
     auto writeSize = write(socket, data, size);
     if(writeSize == size){
         return true;
@@ -21,7 +21,7 @@ bool NetworkParticipant::tryToWrite(int socket, void* data, packet_size_t size){
     }
 }
 
-bool NetworkParticipant::tryToRead(int socket, void* data, packet_size_t size){
+bool NetworkParticipant::tryToRead(socket_t socket, void* data, packet_size_t size){
     auto readSize = read(socket, data, size);
     if(readSize == size){
         return true;
@@ -37,7 +37,7 @@ bool NetworkParticipant::tryToRead(int socket, void* data, packet_size_t size){
     throw NetworkException{"Failed to read from socket"};
 }
 
-void NetworkParticipant::sendToSocket(int socket, Packet* packet){
+void NetworkParticipant::sendToSocket(socket_t socket, Packet* packet){
     packet_size_t size = packet->getSize();
     
     pid packetId = packet->getID();

@@ -18,16 +18,16 @@ struct Packet;
 class Actor;
 
 struct NewClientInfo {
-    NewClientInfo(sockaddr_in address, int socketId) : address(address), socketId(socketId){}
+    NewClientInfo(sockaddr_in address, socket_t socketId) : address(address), socketId(socketId){}
     sockaddr_in address;
-    int socketId;
+    socket_t socketId;
 };
 
 class Server{
     
     vector<ClientConnection*> clientConnections;
     
-    int socketId;
+    socket_t socketId;
     sockaddr_in serverAddress;
     
     sharedQueue<NewClientInfo> newClientQueue;
