@@ -25,6 +25,7 @@ parser.add_argument("-a", "--all", action="store_true")
 parser.add_argument("-l", "--linkonly", action="store_true")
 parser.add_argument("-r", "--run", action="store", nargs="?", default="", const="")
 parser.add_argument("-u", "--unoptimized", action="store_true")
+parser.add_argument("-p", "--debugPy", action="store_true")
 parser.add_argument("-d", "--debug", action="store_true")
 parser.add_argument("-w", "--windows", action="store_true")
 parser.add_argument("-i", "--dontCheckIncludes", action="store_true")
@@ -93,6 +94,12 @@ if args.unoptimized:
 else:
     compilerFlags += " -D OPTIMIZED"
     optimization = "-Os"
+
+if args.debug and not args.unoptimized:
+    executableName += "_Debug"
+    compilerFlags += " -g"
+
+
 
 compilerFlags = optimization+" "+compilerFlags;
 
@@ -238,7 +245,7 @@ if not args.linkonly:
             if not args.dontCheckIncludes and headersChanged:
 
                 command = compiler+" -MM "+compilerFlags+" -c "+cppList[i]
-                if args.debug:
+                if args.debugPy:
                     print("    . Executing: \""+command+"\"")
                 proc = subprocess.Popen(command, stdout=subprocess.PIPE, shell=True)
                 includeList = [x.strip() for x in proc.stdout.read().split(" ")]
@@ -258,7 +265,7 @@ if not args.linkonly:
         if compileAll or cppDiff or hppDiff or otherHppDiff:
             print("    + Compiling: "+cppList[i])
             command = compiler+" "+compilerFlags+" -c "+cppList[i]+" -o "+oppList[i]
-            if args.debug:
+            if args.debugPy:
                 print("    . Executing: \""+command+"\"")
             returnCode = call(command, shell=True)
             if returnCode == 0:
@@ -279,7 +286,7 @@ if args.windows:
 if returnCode == 0:
     print("    ~ Linking: "+executableName);
     command = compiler+" "+compilerFlags+" "+(" ".join(oppList))+" -o "+ executableName+" "+libraryFlags
-    if args.debug:
+    if args.debugPy:
         print("    . Executing: \""+command+"\"")
     returnCode = call(command, shell=True)
 
