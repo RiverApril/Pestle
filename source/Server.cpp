@@ -11,6 +11,7 @@
 #include "ClientConnection.hpp"
 #include "Room.hpp"
 #include "ActorPlayer.hpp"
+#include "ActorEnemy.hpp"
 
 Server::Server(int port){
     
@@ -20,6 +21,8 @@ Server::Server(int port){
     
     room = new Room(50, 30);
     room->generate();
+
+    room->newActor(new ActorEnemy(nextActorId++));
     
     // AF_INET means internet domain instead of file domain
     // SOCK_STREAM means to use a stream instead of a block, so it chooses TCP

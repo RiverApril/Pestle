@@ -98,4 +98,17 @@ void Room::setTile(int x, int y, TileData tile){
     }
 }
 
+Actor* Room::findNearestActor(double cx, double cy, function<bool(Actor*, double)> isValid){
+    Actor* close = nullptr;
+    double closeDistSq = -1;
+    for(auto actorPair : actors){
+        Actor* a = actorPair.second;
+        double distSq = (a->px-cx)*(a->px-cx) + (a->py-cy)*(a->py-cy);
+        if((distSq < closeDistSq || closeDistSq == -1) && isValid(a, distSq)){
+            closeDistSq = distSq;
+            close = a;
+        }
+    }
+    return close;
+}
 

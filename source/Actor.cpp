@@ -8,6 +8,7 @@
 
 #include "Actor.hpp"
 #include "ActorPlayer.hpp"
+#include "ActorEnemy.hpp"
 #include "Display.hpp"
 #include "Room.hpp"
 #include "Geometry.hpp"
@@ -90,6 +91,10 @@ Actor* Actor::loadActor(unsigned char*& dataPointer){
     switch(type){
         case ACTOR_TYPE_Player:{
             actor = new ActorPlayer(type);
+            break;
+        }
+        case ACTOR_TYPE_Enemy:{
+            actor = new ActorEnemy(type);
             break;
         }
         case ACTOR_TYPE_None:{

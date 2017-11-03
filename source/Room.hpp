@@ -44,6 +44,9 @@ public:
     void replaceActor(Actor* actor);
     
     Actor* getActor(int actorId);
+
+    // bool isValid(Actor* check, double distSq)
+    Actor* findNearestActor(double cx, double cy, function<bool(Actor*, double)> isValid);
     
 };
 

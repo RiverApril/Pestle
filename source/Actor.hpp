@@ -16,7 +16,8 @@ class Room;
 
 enum ActorType{
     ACTOR_TYPE_None,
-    ACTOR_TYPE_Player
+    ACTOR_TYPE_Player,
+    ACTOR_TYPE_Enemy
 };
 
 class Actor {
@@ -59,7 +60,7 @@ public:
     double vx, vy; // velocity
     double rx, ry; // radius
 
-    // Not synchronized between client and server
+    // Not saved
     double lastvx, lastvy;
     double lastpx, lastpy;
     bool hasMoved = false;
