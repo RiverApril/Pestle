@@ -32,7 +32,7 @@ Client::Client(MenuGame* game, string ip, int port) : game(game){
     serverAddress.sin_port = htons(port);
     
     if(connect(socketId, (sockaddr *) &serverAddress, sizeof(serverAddress)) == SOCKET_ERROR){
-        throw NetworkException{"Failed to connect to server: " + WSAGetLastError()};
+        throw NetworkException{"Failed to connect to server: " + GET_SOCKET_ERROR};
     }
     
     //fcntl(socketId, F_SETFL, O_NONBLOCK); want blocking

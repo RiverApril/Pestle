@@ -28,10 +28,6 @@ bool NetworkParticipant::tryToRead(socket_t socket, void* data, packet_size_t si
     }else{
         if(readSize != -1){
             cout << "Only read " << readSize << " / " << size << " bytes" << endl;
-        }else{
-            if(errno == EAGAIN || errno == EWOULDBLOCK){
-                return false;
-            }
         }
     }
     throw NetworkException{"Failed to read from socket"};
