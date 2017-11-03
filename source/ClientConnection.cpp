@@ -81,7 +81,8 @@ void ClientConnection::handlePacket(pid packetId, void* packetPointer, packet_si
     switch (packetId) {
         
         case PID_BI_ActorMove: {
-            auto* packet = (Packet_BI_ActorMove*)packetPointer;
+            
+            auto* packet = (Packet_BI_ActorMove*)(new Packet_BI_ActorMove((unsigned char*)packetPointer));
             
             ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(server->room->getActor(packet->actorId));
             if(actorMoving){
@@ -93,6 +94,8 @@ void ClientConnection::handlePacket(pid packetId, void* packetPointer, packet_si
             }else{
                 cout << "Failed to find actor with id: " << packet->actorId << "\n";
             }
+            
+            delete packet;
             break;
         }
             

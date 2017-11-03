@@ -114,7 +114,7 @@ void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
     switch (packetId) {
         case PID_S2C_TellClientsID: {
             
-            auto* packet = (Packet_S2C_TellClientsID*)packetPointer;
+            auto* packet = (Packet_S2C_TellClientsID*)(new Packet_S2C_TellClientsID((unsigned char*)packetPointer));
             
             if(clientId == -1){
                 clientId = packet->newClientId;
@@ -123,6 +123,7 @@ void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
                 throw NetworkException{"Recieved new ID, but already has an ID."};
             }
             
+            delete packet;
             break;
         }
         case PID_S2C_NewActor: {
@@ -137,7 +138,8 @@ void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
             break;
         }
         case PID_BI_ActorMove: {
-            auto* packet = (Packet_BI_ActorMove*)packetPointer;
+            
+            auto* packet = (Packet_BI_ActorMove*)(new Packet_BI_ActorMove((unsigned char*)packetPointer));
             
             ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(game->room->getActor(packet->actorId));
             if(actorMoving){
@@ -148,19 +150,27 @@ void Client::handlePacket(pid packetId, void* packetPointer, size_t packetSize){
             }else{
                 cout << "Failed to find actor with id: " << packet->actorId << "\n";
             }
+            
+            delete packet;
             break;
         }
         case PID_S2C_NewRoom: {
-            auto* packet = (Packet_S2C_NewRoom*)packetPointer;
+            
+            auto* packet = (Packet_S2C_NewRoom*)(new Packet_S2C_NewRoom((unsigned char*)packetPointer));
             
             game->room = new Room(packet->width, packet->height);
             cout << "New Room with size " << packet->width << ", " << packet->height << "\n";
+            
+            delete packet;
             break;
         }
         case PID_S2C_SetTile: {
-            auto* packet = (Packet_S2C_SetTile*)packetPointer;
+            
+            auto* packet = (Packet_S2C_SetTile*)(new Packet_S2C_SetTile((unsigned char*)packetPointer));
             
             game->room->setTile(packet->x, packet->y, packet->tile);
+            
+            delete packet;
             break;
         }
         default: {

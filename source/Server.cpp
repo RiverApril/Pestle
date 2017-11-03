@@ -117,8 +117,7 @@ void Server::handleNewClient(NewClientInfo info){
     
     {
         // Send welcome packet to tell the client their ID
-        auto* packet = new Packet_S2C_TellClientsID();
-        packet->newClientId = client->getClientId();
+        auto* packet = new Packet_S2C_TellClientsID(client->getClientId());
         client->sendToClient(packet);
         delete packet;
     }
@@ -127,16 +126,14 @@ void Server::handleNewClient(NewClientInfo info){
     
     {
         // Send Room data to client
-        auto* packet = new Packet_S2C_NewRoom();
-        packet->width = room->getWidth();
-        packet->height = room->getHeight();
+        auto* packet = new Packet_S2C_NewRoom(room->getWidth(), room->getHeight());
         client->sendToClient(packet);
         delete packet;
     }
     
     {
         // Send Tiles to client
-        auto* packet = new Packet_S2C_SetTile();
+        auto* packet = new Packet_S2C_SetTile(0, 0, TileData());
         for(int i = 0; i < room->getWidth(); i++){
             packet->x = i;
             for(int j = 0; j < room->getHeight(); j++){
