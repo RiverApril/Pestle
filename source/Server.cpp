@@ -191,7 +191,7 @@ void Server::update() {
     for(auto actorPair : room->actors){
         ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(actorPair.second);
 
-        if(actorMoving && actorMoving->hasMoved){
+        if(actorMoving && actorMoving->hasChangedVelocity){
             auto* packet = new Packet_BI_ActorMove(actorMoving);
             sendToAllBut(packet->actorId, packet);
             delete packet;

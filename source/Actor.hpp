@@ -64,6 +64,7 @@ public:
     double lastvx, lastvy;
     double lastpx, lastpy;
     bool hasMoved = false;
+    bool hasChangedVelocity = false;
 
     ActorMoving(ActorType type): Actor(type){}
     ActorMoving(int id, ActorType type, double rx, double ry): Actor(id, type), rx(rx), ry(ry), vx(0), vy(0){}

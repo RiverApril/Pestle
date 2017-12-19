@@ -71,7 +71,8 @@ void ActorMoving::update(Room* room, Display* display, double delta, double xOff
         }
     }
     
-    hasMoved = px != lastpx || py != lastpy || vx != lastvx || vy != lastvy;
+    hasChangedVelocity = vx != lastvx || vy != lastvy;
+    hasMoved = px != lastpx || py != lastpy;
     
     lastpx = px;
     lastpy = py;
