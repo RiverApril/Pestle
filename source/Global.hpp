@@ -57,7 +57,7 @@ typedef int socket_t;
 #define FONT_W 7
 #define FONT_H 12
 
-#define DRAW_DEBUG 0
+#define DRAW_DEBUG 1
 #define STATS_DEBUG 1
 
 #define SERVER_UPDATE_DELAY (1.0/60.0)

@@ -56,18 +56,18 @@ void Room::replaceActor(Actor* actor){
     actors[actor->getId()] = actor;
 }
 
-void Room::update(Display* display, double delta, int xOff, int yOff){
+void Room::update(Display* display, double delta, double xOff, double yOff){
     
     if(display){
     
         int wW, wH;
         SDL_GetWindowSize(display->getWindow(), &wW, &wH);
         
-        int minX = max(0, xOff/FONT_W);
-        int minY = max(0, yOff/FONT_H);
+        int minX = max(0, (int)xOff/FONT_W);
+        int minY = max(0, (int)yOff/FONT_H);
         
-        int maxX = min(width, (xOff+wW)/FONT_W+1);
-        int maxY = min(height, (yOff+wH)/FONT_H+1);
+        int maxX = min(width, (int)(xOff+wW)/FONT_W+1);
+        int maxY = min(height, (int)(yOff+wH)/FONT_H+1);
         
         for(int y = minY; y < maxY; y++){
             for(int x = minX; x < maxX; x++){

@@ -35,7 +35,7 @@ public:
     
     void generate();
     
-    void update(Display* display, double delta, int xOff, int yOff);
+    void update(Display* display, double delta, double xOff, double yOff);
     
     void setTile(int x, int y, TileData tile);
     

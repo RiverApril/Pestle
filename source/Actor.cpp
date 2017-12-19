@@ -13,20 +13,20 @@
 #include "Room.hpp"
 #include "Geometry.hpp"
 
-void Actor::update(Room* room, Display* display, double delta, int xOff, int yOff){
+void Actor::update(Room* room, Display* display, double delta, double xOff, double yOff){
     if(display){
-        display->drawChar(getSymbol(), px-FONT_W/2-xOff, py-FONT_H/2-yOff);
+        display->drawChar(getSymbol(), (int)(px-FONT_W/2-xOff), (int)(py-FONT_H/2-yOff));
     }
 }
 
-void ActorMoving::update(Room* room, Display* display, double delta, int xOff, int yOff){
+void ActorMoving::update(Room* room, Display* display, double delta, double xOff, double yOff){
 
     double dx = vx * delta;
     double dy = vy * delta;
     
     // Radius of the max number of tiles actor takes up
-    int xtr = ceil(double(rx)/FONT_W);
-    int ytr = ceil(double(ry)/FONT_H);
+    int xtr = (int)ceil(double(rx)/FONT_W);
+    int ytr = (int)ceil(double(ry)/FONT_H);
     
     int pcx = int(px/FONT_W);
     int pcy = int(py/FONT_H);

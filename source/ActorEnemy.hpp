@@ -40,7 +40,7 @@ public:
     ActorEnemy(int id): ActorLiving(id, ACTOR_TYPE_Enemy, (FONT_W/2.0)-1, (FONT_H/2.0)-2, 10){}
     virtual ~ActorEnemy(){}
 
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff);
+    virtual void update(Room* room, Display* display, double delta, double xOff, double yOff);
 
     virtual void die(){}
     virtual char getSymbol(){ return 'E'; }

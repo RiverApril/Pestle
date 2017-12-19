@@ -40,7 +40,7 @@ public:
     Actor(int id, ActorType type) : id(id), type(type), px(0), py(0){}
     virtual ~Actor(){}
     
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff);
+    virtual void update(Room* room, Display* display, double delta, double xOff, double yOff);
     virtual char getSymbol(){ return '?'; }
 
 
@@ -69,7 +69,7 @@ public:
     ActorMoving(int id, ActorType type, double rx, double ry): Actor(id, type), rx(rx), ry(ry), vx(0), vy(0){}
     virtual ~ActorMoving(){}
 
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff);
+    virtual void update(Room* room, Display* display, double delta, double xOff, double yOff);
 };
 
 class ActorLiving : public ActorMoving {
@@ -87,7 +87,7 @@ public:
     ActorLiving(int id, ActorType type, double rx, double ry, double maxHp): ActorMoving(id, type, rx, ry), maxHp(maxHp), hp(maxHp), alive(true){}
     virtual ~ActorLiving(){}
 
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){
+    virtual void update(Room* room, Display* display, double delta, double xOff, double yOff){
         ActorMoving::update(room, display, delta, xOff, yOff);
         if(hp <= 0 && alive){
             alive = false;

@@ -10,7 +10,7 @@
 #include "Room.hpp"
 #include "ActorPlayer.hpp"
 
-void ActorEnemy::update(Room* room, Display* display, double delta, int xOff, int yOff){
+void ActorEnemy::update(Room* room, Display* display, double delta, double xOff, double yOff){
     ActorLiving::update(room, display, delta, xOff, yOff);
 
     if(!display){

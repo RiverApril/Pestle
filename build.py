@@ -23,7 +23,7 @@ def mkdir_p(path):
 parser = argparse.ArgumentParser(description="Compile Pestle.")
 parser.add_argument("-a", "--all", action="store_true")
 parser.add_argument("-l", "--linkonly", action="store_true")
-parser.add_argument("-r", "--run", action="store", nargs="?", default="", const="")
+parser.add_argument("-r", "--run", action="store", nargs="?", default=None, const="")
 parser.add_argument("-u", "--unoptimized", action="store_true")
 parser.add_argument("-p", "--debugPy", action="store_true")
 parser.add_argument("-d", "--debug", action="store_true")

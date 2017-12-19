@@ -29,7 +29,7 @@ public:
     ActorPlayer(int id): ActorLiving(id, ACTOR_TYPE_Player, (FONT_W/2.0)-1, (FONT_H/2.0)-2, 10){}
     virtual ~ActorPlayer(){}
 
-    virtual void update(Room* room, Display* display, double delta, int xOff, int yOff){
+    virtual void update(Room* room, Display* display, double delta, double xOff, double yOff){
         ActorLiving::update(room, display, delta, xOff, yOff);
     }
 

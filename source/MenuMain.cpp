@@ -24,12 +24,12 @@ void MenuMain::update(Display* display, double delta){
     // temp:
     string ip;
     int port;
-    /*cout << "Enter ip: ";
-    cin >> ip;
-    cout << "Enter port: ";
-    cin >> port;*/
-    ip = "127.0.0.1";
+    //ip = "127.0.0.1";
     port = 1337;
+    cout << "Enter ip: ";
+    cin >> ip;
+    //cout << "Enter port: ";
+    //cin >> port;
     
     MenuGame* game = new MenuGame(logic);
     
