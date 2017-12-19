@@ -9,7 +9,7 @@
 #ifndef ActorEnemy_hpp
 #define ActorEnemy_hpp
 
-#include "Actor.hpp"
+#include "ActorLiving.hpp"
 
 class ActorEnemy : public ActorLiving {
 protected:

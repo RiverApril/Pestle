@@ -147,6 +147,7 @@ void Client::handlePacket(pid packetId, void* packetPointer, packet_size_t packe
                 actorMoving->py = packet->py;
                 actorMoving->vx = packet->vx;
                 actorMoving->vy = packet->vy;
+                actorMoving->markedForRemoval = false;
             }else{
                 cout << "Failed to find actor with id: " << packet->actorId << "\n";
             }
@@ -171,6 +172,17 @@ void Client::handlePacket(pid packetId, void* packetPointer, packet_size_t packe
             game->room->setTile(packet->x, packet->y, packet->tile);
             
             delete packet;
+            break;
+        }
+        case PID_S2C_RemoveActor: {
+            
+            auto* packet = (Packet_S2C_RemoveActor*)(new Packet_S2C_RemoveActor((unsigned char*)packetPointer));
+            
+            game->room->removeActor(packet->actorId);
+            
+            delete packet;
+            break;
+            
             break;
         }
         default: {

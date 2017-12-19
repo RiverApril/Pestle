@@ -49,6 +49,16 @@ Actor* Room::getActor(int actorId){
     return it->second;
 }
 
+void Room::removeActor(int actorId){
+    auto it = actors.find(actorId);
+    if(it == actors.end()){
+        cout << "Failed to remove actor with id: " << actorId << "\n";
+        return;
+    }
+    delete it->second;
+    actors.erase(it);
+}
+
 void Room::replaceActor(Actor* actor){
     if(actors.find(actor->getId()) != actors.end()){
         delete actors[actor->getId()];
@@ -66,8 +76,8 @@ void Room::update(Display* display, double delta, double xOff, double yOff){
         int minX = max(0, (int)xOff/FONT_W);
         int minY = max(0, (int)yOff/FONT_H);
         
-        int maxX = min(width, (int)(xOff+wW)/FONT_W+1);
-        int maxY = min(height, (int)(yOff+wH)/FONT_H+1);
+        int maxX = min(width, (int)(xOff+wW)/FONT_W+2);
+        int maxY = min(height, (int)(yOff+wH)/FONT_H+2);
         
         for(int y = minY; y < maxY; y++){
             for(int x = minX; x < maxX; x++){
@@ -80,7 +90,9 @@ void Room::update(Display* display, double delta, double xOff, double yOff){
     }
     
     for(auto actorPair : actors){
-        actorPair.second->update(this, display, delta, xOff, yOff);
+        if(!actorPair.second->markedForRemoval){
+            actorPair.second->update(this, display, delta, xOff, yOff);
+        }
     }
 }
 

@@ -9,9 +9,10 @@
 #ifndef Packet_hpp
 #define Packet_hpp
 
-#include "Actor.hpp"
+#include "ActorMoving.hpp"
 #include "TileData.hpp"
 #include "Network.hpp"
+#include "ClientAction.hpp"
 
 enum pid{
     PID_ERROR = 0,
@@ -19,7 +20,9 @@ enum pid{
     PID_S2C_NewActor,
     PID_BI_ActorMove,
     PID_S2C_NewRoom,
-    PID_S2C_SetTile
+    PID_S2C_SetTile,
+    PID_S2C_RemoveActor,
+    PID_C2S_ClientAction
 };
 
 struct PacketInfo{
@@ -137,6 +140,64 @@ struct Packet_BI_ActorMove : Packet {
     
     int actorId;
     double px, py, vx, vy;
+};
+
+struct Packet_S2C_RemoveActor : Packet {
+    pid getID(){ return PID_S2C_RemoveActor; }
+    
+    Packet_S2C_RemoveActor(int actorId){
+        this->actorId = actorId;
+    }
+    
+    Packet_S2C_RemoveActor(unsigned char* dataPointer){
+        LOAD(actorId);
+    }
+    
+    virtual packet_size_t getSize(){
+        return sizeof(actorId);
+    }
+    
+    virtual void sendData(NetworkParticipant* n, int socket){
+        packet_size_t size = getSize();
+        unsigned char* dataPointer = (unsigned char*)malloc(size);
+        SAVE(actorId);
+        n->tryToWrite(socket, dataPointer-size, size);
+    }
+    
+    int actorId;
+};
+
+struct Packet_C2S_ClientAction : Packet {
+    pid getID(){ return PID_C2S_ClientAction; }
+    
+    Packet_C2S_ClientAction(ClientAction action, double worldX, double worldY) : action(action), worldX(worldX), worldY(worldY) {
+        
+    }
+    
+    Packet_C2S_ClientAction(unsigned char* dataPointer){
+        LOAD(action);
+        LOAD(worldX);
+        LOAD(worldY);
+    }
+    
+    virtual packet_size_t getSize(){
+        return sizeof(action)
+        +sizeof(worldX)
+        +sizeof(worldY);
+    }
+    
+    virtual void sendData(NetworkParticipant* n, int socket){
+        packet_size_t size = getSize();
+        unsigned char* dataPointer = (unsigned char*)malloc(size);
+        SAVE(action);
+        SAVE(worldX);
+        SAVE(worldY);
+        n->tryToWrite(socket, dataPointer-size, size);
+    }
+    
+    ClientAction action;
+    double worldX;
+    double worldY;
 };
 
 struct Packet_S2C_NewRoom : Packet {

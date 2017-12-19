@@ -9,6 +9,7 @@
 #include "ClientConnection.hpp"
 #include "Server.hpp"
 #include "Room.hpp"
+#include "ActorProjectile.hpp"
 
 
 ClientConnection::ClientConnection(Server* server, sockaddr_in address, int socketId, int clientId) : server(server), address(address), socketId(socketId), clientId(clientId) {
@@ -98,7 +99,39 @@ void ClientConnection::handlePacket(pid packetId, void* packetPointer, packet_si
             delete packet;
             break;
         }
+    
+        case PID_C2S_ClientAction: {
             
+            auto* packet = (Packet_C2S_ClientAction*)(new Packet_C2S_ClientAction((unsigned char*)packetPointer));
+            
+            Actor* actioner = server->room->getActor(clientId);
+            
+            switch (packet->action) {
+                case actionShoot:{
+                    
+                    double d = sqrt((packet->worldX - actioner->px)*(packet->worldX - actioner->px) + (packet->worldY - actioner->py)*(packet->worldY - actioner->py));
+                    if(d > 0){
+                        double dx = (packet->worldX - actioner->px)/d;
+                        double dy = (packet->worldY - actioner->py)/d;
+                        double vx = dx * 0.2;
+                        double vy = dy * 0.2;
+                    
+                        server->newActor(new ActorProjectile(server->getNewActorId(), clientId, actioner->px, actioner->py, vx, vy));
+                    }
+                    break;
+                }
+                case actionNone:
+                    cout << "No action from [" << clientId << "]\n";
+                    break;
+                default:
+                    cout << "Unknown action from [" << clientId << "]\n";
+                    break;
+            }
+            
+            delete packet;
+            break;
+            
+        }
         default: {
             throw NetworkException{string("Unknown packet with id: ") + to_string(packetId)};
         }

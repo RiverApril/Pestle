@@ -12,6 +12,7 @@
 #include "Room.hpp"
 #include "Display.hpp"
 #include "ActorPlayer.hpp"
+#include "ClientAction.hpp"
 
 
 MenuGame::MenuGame(Logic* logic) : Menu(logic){
@@ -62,10 +63,24 @@ void MenuGame::update(Display* display, double delta){
 
             player->vx = vx;
             player->vy = vy;
-            if(player->hasMoved){
+            if(player->hasChangedVelocity){
                 auto* packet = new Packet_BI_ActorMove(player);
                 logic->client->sendToServer(packet);
                 delete packet;
+            }
+            
+            if(shootTimer > 0){
+                shootTimer -= delta;
+            }
+            if(display->isKey(logic->settings->keyShoot)){
+                if(shootTimer <= 0){
+                    shootTimer = 500;
+                    int mx, my;
+                    display->getMouse(mx, my);
+                    auto* packet = new Packet_C2S_ClientAction(actionShoot, mx+viewXOff, my+viewYOff);
+                    logic->client->sendToServer(packet);
+                    delete packet;
+                }
             }
 
             int wW, wH;

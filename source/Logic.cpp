@@ -61,6 +61,3 @@ void Logic::keyUp(SDL_Scancode scancode){
 
 
 
-
-
-

@@ -25,6 +25,7 @@ public:
     
     Room* room = nullptr;
     ActorPlayer* player = nullptr;
+    double shootTimer = 0;
     
     MenuGame(Logic* logic);
     ~MenuGame();

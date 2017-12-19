@@ -9,7 +9,7 @@
 #ifndef ActorPlayer_hpp
 #define ActorPlayer_hpp
 
-#include "Actor.hpp"
+#include "ActorLiving.hpp"
 
 class ActorPlayer : public ActorLiving {
 protected:
@@ -21,6 +21,7 @@ protected:
     };
 
 public:
+    
     virtual packet_size_t getSize(){
         return ActorLiving::getSize();
     }

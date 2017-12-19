@@ -53,6 +53,9 @@ public:
     SDL_Renderer* getRenderer(){ return sdlRenderer; }
     
     bool isKey(int key){ return keyboardState[key]; }
+    void getMouse(int& x, int& y){
+        SDL_GetMouseState(&x, &y);
+    }
 };
 
 

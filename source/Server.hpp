@@ -59,6 +59,7 @@ public:
     void sendToAllBut(int clientId, Packet* packet);
     
     void newActor(Actor* actor);
+    int getNewActorId(){ return nextActorId++; }
     
     void update();
     

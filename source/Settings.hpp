@@ -20,6 +20,7 @@ public:
     SDL_Scancode keyRight = SDL_SCANCODE_D;
     SDL_Scancode keyUp    = SDL_SCANCODE_W;
     SDL_Scancode keyDown  = SDL_SCANCODE_S;
+    SDL_Scancode keyShoot = SDL_SCANCODE_SPACE;
 };
 
 #endif /* Settings_hpp */

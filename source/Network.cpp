@@ -21,7 +21,6 @@ bool NetworkParticipant::tryToWrite(socket_t socket, void* data, packet_size_t s
     if(remainingSize == 0){
         return true;
     }else{
-        cout << "Only wrote " << wrote << " bytes out of " << size << endl;
         throw NetworkException{"Failed to write to socket"};
     }
 }
@@ -38,7 +37,6 @@ bool NetworkParticipant::tryToRead(socket_t socket, void* data, packet_size_t si
     if(remainingSize == 0){
         return true;
     }else{
-        cout << "Only read " << red << " bytes out of " << size << endl;
         throw NetworkException{"Failed to read from socket"};
     }
 }

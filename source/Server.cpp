@@ -179,14 +179,16 @@ void Server::update() {
     }
         
     
-    for(int i = 0; i < clientConnections.size(); i++){
+    for(size_t i = 0; i < clientConnections.size(); i++){
         clientConnections[i]->update();
         
         if(!clientConnections[i]->isClientConnected()){
-            clientConnections.erase(clientConnections.begin() + i);
+            clientConnections.erase(clientConnections.begin() + (long)i);
             i--;
         }
     }
+    vector<int> removeActors;
+    
     room->update(nullptr, delta, 0, 0);
     for(auto actorPair : room->actors){
         ActorMoving* actorMoving = dynamic_cast<ActorMoving*>(actorPair.second);
@@ -196,6 +198,16 @@ void Server::update() {
             sendToAllBut(packet->actorId, packet);
             delete packet;
         }
+        if(actorPair.second->markedForRemoval){
+            removeActors.push_back(actorPair.first);
+        }
+    }
+    
+    for(int actorId : removeActors){
+        room->removeActor(actorId);
+        auto* packet = new Packet_S2C_RemoveActor(actorId);
+        sendToAll(packet);
+        delete packet;
     }
 }
 
