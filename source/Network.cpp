@@ -10,29 +10,37 @@
 #include "Packet.hpp"
 
 bool NetworkParticipant::tryToWrite(socket_t socket, void* data, packet_size_t size){
-    auto writeSize = write(socket, data, size);
-    if(writeSize == size){
-        //cout << "Wrote " << writeSize << " bytes\n";
+    ssize_t wrote;
+    auto remainingSize = size;
+    unsigned char* dataPointer = (unsigned char*)data;
+
+    while(remainingSize > 0 && (wrote = write(socket, dataPointer, remainingSize)) > 0 ){
+        dataPointer += wrote;
+        remainingSize -= wrote;
+    }
+    if(remainingSize == 0){
         return true;
     }else{
-        if(writeSize != -1){
-            cout << "Only wrote " << writeSize << " bytes out of " << size << endl;
-        }
+        cout << "Only wrote " << wrote << " bytes out of " << size << endl;
         throw NetworkException{"Failed to write to socket"};
     }
 }
 
 bool NetworkParticipant::tryToRead(socket_t socket, void* data, packet_size_t size){
-    auto readSize = read(socket, data, size);
-    if(readSize == size){
-        //cout << "Read " << readSize << " bytes\n";
+    ssize_t red; // read was taken
+    auto remainingSize = size;
+    unsigned char* dataPointer = (unsigned char*)data;
+
+    while(remainingSize > 0 && (red = read(socket, dataPointer, remainingSize)) > 0 ){
+        dataPointer += red;
+        remainingSize -= red;
+    }
+    if(remainingSize == 0){
         return true;
     }else{
-        if(readSize != -1){
-            cout << "Only read " << readSize << " / " << size << " bytes" << endl;
-        }
+        cout << "Only read " << red << " bytes out of " << size << endl;
+        throw NetworkException{"Failed to read from socket"};
     }
-    throw NetworkException{"Failed to read from socket"};
 }
 
 void NetworkParticipant::sendToSocket(socket_t socket, Packet* packet){
