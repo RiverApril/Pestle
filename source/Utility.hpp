@@ -14,33 +14,33 @@
 template <typename T>
 class sharedQueue{
     
-    queue<T> queue;
+    queue<T> q;
     mutex lockMutex;
     
 public:
     
     T& front(){
         unique_lock<mutex> lock(lockMutex);
-        return queue.front();
+        return q.front();
     }
     void pop(){
         unique_lock<mutex> lock(lockMutex);
-        queue.pop();
+        q.pop();
     }
     
     void push(const T& item){
         unique_lock<mutex> lock(lockMutex);
-        queue.push(item);
+        q.push(item);
     }
     
     size_t size(){
         unique_lock<mutex> lock(lockMutex);
-        return queue.size();
+        return q.size();
     }
     
     bool empty(){
         unique_lock<mutex> lock(lockMutex);
-        return queue.empty();
+        return q.empty();
     }
     
 };
