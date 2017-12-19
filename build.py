@@ -141,7 +141,7 @@ else:
         libraryFlags += " `sdl2-config --libs`"
     elif systemName == "Linux":
         compilerFlags += " `sdl2-config --cflags`"
-        libraryFlags  += " `sdl2-config --libs` -lSDL2_image"
+        libraryFlags  += " `sdl2-config --libs` -lSDL2_image -lpthread"
 
 
 if args.windows:
