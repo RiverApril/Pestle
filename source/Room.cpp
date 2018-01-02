@@ -9,6 +9,7 @@
 #include "Room.hpp"
 #include "Actor.hpp"
 #include "Display.hpp"
+#include "Geometry.hpp"
 
 Room::Room(int width, int height) : width(width), height(height){
     for(int x = 0; x < width; x++){
@@ -83,7 +84,9 @@ void Room::update(Display* display, double delta, double xOff, double yOff){
             for(int x = minX; x < maxX; x++){
                 TileData tileData = tileAt(x, y);
                 if(tileData.tile != tileEmpty){
-                    display->drawChar(getTileChar(tileData), x*FONT_W-xOff-FONT_W/2, y*FONT_H-yOff-FONT_H/2, isTileInv(tileData));
+                    int xx = (int)(x*FONT_W-xOff-FONT_W/2);
+                    int yy = (int)(y*FONT_H-yOff-FONT_H/2);
+                    display->drawChar(getTileChar(tileData), xx, yy, isTileInv(tileData));
                 }
             }
         }

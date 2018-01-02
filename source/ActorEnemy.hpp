@@ -17,23 +17,29 @@ protected:
         ActorLiving::save(dataPointer);
         SAVE(targetId);
         SAVE(moveSpeed);
+        SAVE(targetX);
+        SAVE(targetY);
     };
     virtual void load(unsigned char*& dataPointer){
         ActorLiving::load(dataPointer);
         LOAD(targetId);
         LOAD(moveSpeed);
+        LOAD(targetX);
+        LOAD(targetY);
     };
 
 public:
     
     int targetId = -1;
     double moveSpeed = 0.04;
-
-    // Not saved
-    Actor* target = nullptr;
+    double targetX, targetY;
 
     virtual packet_size_t getSize(){
-        return ActorLiving::getSize() + sizeof(targetId) + sizeof(moveSpeed);
+        return ActorLiving::getSize()
+        +sizeof(targetId)
+        +sizeof(moveSpeed)
+        +sizeof(targetX)
+        +sizeof(targetY);
     }
     
     ActorEnemy(): ActorLiving(ACTOR_TYPE_Enemy){}

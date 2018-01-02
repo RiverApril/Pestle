@@ -62,6 +62,7 @@ void ClientConnection::listenToClient(){
     }catch(NetworkException e){
         cout << "Client Connection Error: " << e.reason << "\n";
         clientIsConnected = false;
+        server->room->getActor(clientId)->markedForRemoval = true;
         close(socketId);
     }
 }

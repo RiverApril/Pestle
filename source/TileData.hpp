@@ -17,6 +17,11 @@ enum Tile{
 };
 
 struct TileData{
+    
+    TileData(){}
+    TileData(Tile tile) : tile(tile){}
+    TileData(Tile tile, int meta) : tile(tile), meta(meta){}
+    
     Tile tile = tileEmpty;
     int meta = 0;
 };
